@@ -31,6 +31,9 @@ class App {
   }
 
   protected routes(): void {
+    this.app.get("/", (req: Request, res: Response) => {
+      res.send("Ini BACKEND");
+    })
     this.app.use("/api", new Routes().router);
   }
 }
