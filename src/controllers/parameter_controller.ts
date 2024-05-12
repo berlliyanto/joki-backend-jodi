@@ -11,7 +11,7 @@ class ParameterController {
     const { page, limit } = paginationQuery(req.query);
     const { machine } = req.params;
 
-    const data = await new ParameterServices().index(parseInt(machine), { page, limit });
+    const data = await new ParameterServices().index(machine, { page, limit });
     if (!data.success) {
       return res.status(404).send(data);
     }
@@ -24,7 +24,7 @@ class ParameterController {
   ): Promise<Response<ResponseInterface, Record<string, any>>> {
     const { machine } = req.params;
 
-    const data = await new ParameterServices().latest(parseInt(machine));
+    const data = await new ParameterServices().latest(machine);
     if (!data.success) {
       return res.status(404).send(data);
     }
@@ -48,7 +48,7 @@ class ParameterController {
   ): Promise<Response<ResponseInterface, Record<string, any>>> {
     const { machine } = req.params;
 
-    const data = await new ParameterServices().reset(parseInt(machine));
+    const data = await new ParameterServices().reset(machine);
     if (!data.success) {
       return res.status(404).send(data);
     }

@@ -17,6 +17,14 @@ class DeviceController {
     return res.status(200).send(data);
   }
 
+  async input(req: Request, res: Response): Promise<Response<ResponseInterface, Record<string, any>>> {
+    const data = await new DeviceServices().input(req.body);
+    if (!data.success) {
+      return res.status(404).send(data);
+    }
+    return res.status(200).send(data);
+  }
+
   async pbStatus(
     req: Request,
     res: Response

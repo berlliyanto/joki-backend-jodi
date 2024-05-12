@@ -4,7 +4,7 @@ import mongoosePaginate from "mongoose-paginate-v2";
 const { Schema } = mongoose;
 
 export interface PerformanceDocument extends Document {
-    machine: number,
+    machine: string,
     operation_time: number,
     cycle_time: number,
     processed: number,
@@ -13,7 +13,7 @@ export interface PerformanceDocument extends Document {
 
 const performanceSchema = new Schema<PerformanceDocument>({
     machine: {
-        type: Number,
+        type: String,
         required: true
     },
     operation_time: {

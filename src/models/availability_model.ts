@@ -4,7 +4,7 @@ import mongoosePaginate from "mongoose-paginate-v2";
 const { Schema } = mongoose;
 
 export interface AvailabilityDocument extends Document {
-    machine: number,
+    machine: string,
     operation_time: number,
     down_time: number,
     running_time: number,
@@ -13,7 +13,7 @@ export interface AvailabilityDocument extends Document {
 
 const availabilitySchema = new Schema<AvailabilityDocument>({
     machine: {
-        type: Number,
+        type: String,
         required: true
     },
     operation_time: {

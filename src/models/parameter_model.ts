@@ -5,7 +5,7 @@ const { Schema } = mongoose;
 
 
 export interface ParameterDocument extends Document {
-    machine: number,
+    machine: string,
     loading_time: number,
     cycle_time: number,
     oee_target: number,
@@ -15,7 +15,7 @@ export interface ParameterDocument extends Document {
 
 const parameterSchema = new Schema<ParameterDocument>({
     machine: {
-        type: Number,
+        type: String,
         required: true
     },
     loading_time: {

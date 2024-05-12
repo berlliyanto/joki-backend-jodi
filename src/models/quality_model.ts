@@ -4,7 +4,7 @@ import mongoosePaginate from "mongoose-paginate-v2";
 const { Schema } = mongoose;
 
 export interface QualitySchema extends Document {
-    machine: number,
+    machine: string,
     good: number,
     defect: number,
     processed: number,
@@ -13,7 +13,7 @@ export interface QualitySchema extends Document {
 
 const qualitySchema = new Schema<QualitySchema>({
     machine: {
-        type: Number,
+        type: String,
         required: true
     },
     good: {

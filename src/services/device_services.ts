@@ -31,6 +31,22 @@ class DeviceServices {
     };
   }
 
+  async input(body: any): Promise<ResponseInterface> {
+    const data = await Device.create(body);
+    if (!data) {
+      return {
+        success: false,
+        message: "Date failed to create",
+        data: null,
+      };
+    }
+    return {
+      success: true,
+      message: "Data created",
+      data: data,
+    };
+  }
+
   async pbStatus(): Promise<ResponseInterface> {
     const data = await Device.findOne({}, null, { sort: { _id: -1 } });
 

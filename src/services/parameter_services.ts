@@ -5,7 +5,7 @@ import { Parameter } from "../models/parameter_model";
 
 class ParameterServices {
   async index(
-    machine: number,
+    machine: string,
     { page, limit }: PaginationInterface
   ): Promise<ResponseInterface> {
     const data = await Parameter.paginate(
@@ -26,7 +26,7 @@ class ParameterServices {
       data: data,
     };
   }
-  async latest(machine: number): Promise<ResponseInterface> {
+  async latest(machine: string): Promise<ResponseInterface> {
     const data = await Parameter.findOne({ machine: machine }, null, {
       sort: { _id: -1 },
     });
@@ -76,7 +76,7 @@ class ParameterServices {
     };
   }
 
-  async reset(machine: number): Promise<ResponseInterface> {
+  async reset(machine: string): Promise<ResponseInterface> {
     const data = await Parameter.updateMany(
       { machine: machine, state: true },
       { state: false }

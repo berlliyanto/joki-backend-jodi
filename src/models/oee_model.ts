@@ -4,7 +4,7 @@ import mongoosePaginate from "mongoose-paginate-v2";
 const { Schema } = mongoose;
 
 export interface OEEDocument extends Document {
-    machine: number,
+    machine: string,
     availability: number,
     quality: number,
     performance: number,
@@ -13,7 +13,7 @@ export interface OEEDocument extends Document {
 
 const oeeSchema = new Schema<OEEDocument>({
     machine: {
-        type: Number,
+        type: String,
         required: true
     },
     availability: {
