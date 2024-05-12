@@ -2,10 +2,12 @@
   "name": "backend-jodi-polman",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "src/app.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon src/app.ts"
+    "start": "nodemon src/app.ts",
+    "build": "tsc -p tsconfig.json",
+    "vercel-build": "echo hello"
   },
   "author": "berli",
   "license": "ISC",
