@@ -1,10 +1,11 @@
-import { PaginateOptions } from "mongoose";
+import mongoose, { PaginateOptions } from "mongoose";
 import { ResponseInterface } from "../interface/response_interface";
 import { Device, ValuesType } from "../models/device_model";
 import { PaginationInterface } from "../interface/pagination_interface";
+import { PickPlace } from "../models/picknplace_model";
+import { Testing } from "../models/testing_model";
 
 interface PaginateDocsInterface {
-  _id: string;
   timestamp: number;
   values: ValuesType[];
 }
@@ -41,21 +42,57 @@ class DeviceServices {
     };
   }
 
-  async input(body: any): Promise<ResponseInterface> {
-    console.log(body);
-    const data = await Device.create(body);
-    if (!data) {
+  async input(body: PaginateDocsInterface): Promise<ResponseInterface> {
+    const { timestamp, values } = body;
+    let pickplaceData: ValuesType[] = [];
+    let testingData: ValuesType[] = [];
+
+    values.forEach((value: ValuesType) => {
+      if (value.id.includes("p&place")) {
+        pickplaceData.push(value);
+      } else if (value.id.includes("testing")) {
+        testingData.push(value);
+      }
+    });
+
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+      const pickPlace = await PickPlace.create({
+        values: pickplaceData,
+        timestamp,
+      });
+      const testing = await Testing.create({ values: testingData, timestamp });
+      await session.commitTransaction();
+      return {
+        success: true,
+        message: "Data created",
+        data: { pickPlace, testing },
+      }
+    } catch (error) {
+      await session.abortTransaction();
+      session.endSession();
       return {
         success: false,
-        message: "Date failed to create",
+        message: "Error while creating data : " + error,
         data: null,
       };
     }
-    return {
-      success: true,
-      message: "Data created",
-      data: data,
-    };
+
+    // const data = await Device.create(body);
+    // if (!data) {
+    //   return {
+    //     success: false,
+    //     message: "Date failed to create",
+    //     data: null,
+    //   };
+    // }
+    // return {
+    //   success: true,
+    //   message: "Data created",
+    //   data: data,
+    // };
   }
 
   async pbStatus(machine: string): Promise<ResponseInterface> {
