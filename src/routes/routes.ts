@@ -26,10 +26,10 @@ class Routes extends BaseRoutes {
 
     //Device
     this.router.post("/devices/input", deviceC.input);
-    this.router.get("/devices", auth, deviceC.index);
-    this.router.get("/devices/pb-status", auth, deviceC.pbStatus);
-    this.router.get("/devices/latest-sensor", auth, deviceC.latestSensor);
-    this.router.get("/devices/history-sensor", auth, deviceC.historySensor);
+    this.router.get("/devices/:machine", auth, deviceC.index);
+    this.router.get("/devices/pb-status/:machine", auth, deviceC.pbStatus);
+    this.router.get("/devices/latest-sensor/:machine", auth, deviceC.latestSensor);
+    this.router.get("/devices/history-sensor/:machine", auth, deviceC.historySensor);
 
     //Parameter
     this.router.get("/parameter/:machine", auth, parameterC.index);

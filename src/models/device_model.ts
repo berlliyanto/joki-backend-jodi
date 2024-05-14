@@ -29,4 +29,4 @@ const deviceSchema = new Schema<DeviceDocument>({
 
 deviceSchema.plugin(mongoosePaginate);
 
-export const Device = mongoose.model<DeviceDocument, mongoose.PaginateModel<DeviceDocument>>("datas", deviceSchema);
+export const Device = mongoose.model<DeviceDocument, mongoose.PaginateModel<DeviceDocument>>("devices", deviceSchema);

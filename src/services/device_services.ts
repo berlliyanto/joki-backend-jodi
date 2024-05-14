@@ -3,11 +3,17 @@ import { ResponseInterface } from "../interface/response_interface";
 import { Device, ValuesType } from "../models/device_model";
 import { PaginationInterface } from "../interface/pagination_interface";
 
+interface PaginateDocsInterface {
+  _id: string;
+  timestamp: number;
+  values: ValuesType[];
+}
+
 class DeviceServices {
-  async index({
-    page,
-    limit,
-  }: PaginationInterface): Promise<ResponseInterface> {
+  async index(
+    machine: string,
+    { page, limit }: PaginationInterface
+  ): Promise<ResponseInterface> {
     const options: PaginateOptions = {
       page: page,
       limit: limit,
@@ -16,7 +22,11 @@ class DeviceServices {
 
     const data = await Device.paginate({}, options);
 
-    if (!data) {
+    // const filteredData = data.docs.filter((item: PaginateDocsInterface) => {
+    //   return item.values.some((value: ValuesType) => value.id.includes(machine));
+    // });
+
+    if (!data || data.docs.length === 0) {
       return {
         success: false,
         message: "Data not found",
@@ -32,6 +42,7 @@ class DeviceServices {
   }
 
   async input(body: any): Promise<ResponseInterface> {
+    console.log(body);
     const data = await Device.create(body);
     if (!data) {
       return {
@@ -47,11 +58,14 @@ class DeviceServices {
     };
   }
 
-  async pbStatus(): Promise<ResponseInterface> {
+  async pbStatus(machine: string): Promise<ResponseInterface> {
     const data = await Device.findOne({}, null, { sort: { _id: -1 } });
 
     const filteredData = data?.values.filter((item: ValuesType) => {
-      return item.id.includes("Emergency") || item.id.includes("PB");
+      return (
+        item.id.includes(machine) &&
+        (item.id.includes("Emergency") || item.id.includes("PB"))
+      );
     });
 
     if (!data) {
@@ -69,11 +83,12 @@ class DeviceServices {
     };
   }
 
-  async latestSensor(): Promise<ResponseInterface> {
+  async latestSensor(machine: string): Promise<ResponseInterface> {
     const data = await Device.findOne({}, null, { sort: { _id: -1 } });
 
-    const filteredData = data?.values.filter((item: ValuesType) =>
-      item.id.includes("Sensor")
+    const filteredData = data?.values.filter(
+      (item: ValuesType) =>
+        item.id.includes(machine) && item.id.includes("Sensor")
     );
 
     if (!data) {
@@ -91,10 +106,10 @@ class DeviceServices {
     };
   }
 
-  async historySensor({
-    page,
-    limit,
-  }: PaginationInterface): Promise<ResponseInterface> {
+  async historySensor(
+    machine: string,
+    { page, limit }: PaginationInterface
+  ): Promise<ResponseInterface> {
     const options: PaginateOptions = {
       page: page,
       limit: limit,
@@ -104,18 +119,18 @@ class DeviceServices {
     const data = Device.paginate({}, options);
 
     if (!data) {
-        return {
-          success: false,
-          message: "Data not found",
-          data: null,
-        };
-      }
-  
       return {
-        success: true,
-        message: "Data found",
-        data: data,
+        success: false,
+        message: "Data not found",
+        data: null,
       };
+    }
+
+    return {
+      success: true,
+      message: "Data found",
+      data: data,
+    };
   }
 }
 

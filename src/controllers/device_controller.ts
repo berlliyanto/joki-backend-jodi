@@ -9,8 +9,9 @@ class DeviceController {
     res: Response
   ): Promise<Response<ResponseInterface, Record<string, any>>> {
     const { page, limit } = paginationQuery(req.query);
+    const { machine } = req.params;
 
-    const data = await new DeviceServices().index({ page, limit });
+    const data = await new DeviceServices().index(machine, { page, limit });
     if (!data.success) {
       return res.status(404).send(data);
     }
@@ -29,7 +30,9 @@ class DeviceController {
     req: Request,
     res: Response
   ): Promise<Response<ResponseInterface, Record<string, any>>> {
-    const data = await new DeviceServices().pbStatus();
+    const { machine } = req.params;
+
+    const data = await new DeviceServices().pbStatus(machine);
     if (!data.success) {
       return res.status(404).send(data);
     }
@@ -40,7 +43,9 @@ class DeviceController {
     req: Request,
     res: Response
   ): Promise<Response<ResponseInterface, Record<string, any>>> {
-    const data = await new DeviceServices().latestSensor();
+    const { machine } = req.params;
+
+    const data = await new DeviceServices().latestSensor(machine);
     if (!data.success) {
       return res.status(404).send(data);
     }
@@ -49,8 +54,9 @@ class DeviceController {
 
   async historySensor(req: Request, res: Response): Promise<Response<ResponseInterface, Record<string, any>>> {
     const { page, limit } = paginationQuery(req.query);
+    const { machine } = req.params;
 
-    const data = await new DeviceServices().historySensor({ page, limit });
+    const data = await new DeviceServices().historySensor(machine, { page, limit });
     if (!data.success) {
       return res.status(404).send(data);
     }
