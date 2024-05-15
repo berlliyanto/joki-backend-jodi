@@ -1,16 +1,16 @@
 import { PaginationInterface } from "../interface/pagination_interface";
 
-export const paginationQuery = ({ pagee, limitt }: { pagee?: string; limitt?: string }): PaginationInterface => {
-  let page: number = 1;
-  let limit: number = 10;
+export const paginationQuery = ({ page, limit }: { page?: string; limit?: string }): PaginationInterface => {
+  let pagee: number = 1;
+  let limitt: number = 10;
 
-  if (pagee) {
-    page = parseInt(pagee as string);
+  if (page) {
+    pagee = parseInt(page as string);
   }
 
-  if (limitt) {
-    limit = parseInt(limitt as string);
+  if (limit) {
+    limitt = parseInt(limit as string);
   }
 
-  return { page, limit };
+  return { page: pagee, limit: limitt };
 };

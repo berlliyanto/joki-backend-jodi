@@ -38,6 +38,14 @@ class AuthController {
 
         return res.status(200).send(data);
     }
+
+    async logout(req: Request, res: Response): Promise<Response<ResponseInterface, Record<string, any>>> {
+        return res.status(200).send({
+            success: true,
+            message: "Logout Success",
+            data: null
+        });
+    }
 }
 
 export default AuthController;

@@ -4,10 +4,14 @@ import AuthController from "../controllers/auth_controller";
 import DeviceController from "../controllers/device_controller";
 import { auth } from "../middlewares/auth_middleware";
 import ParameterController from "../controllers/parameter_controller";
+import PickPlaceController from "../controllers/pickplace_controller";
+import TestingController from "../controllers/tesing_controller";
 
 const authC = new AuthController();
 const deviceC = new DeviceController();
 const parameterC = new ParameterController();
+const pickplaceC = new PickPlaceController();
+const testingC = new TestingController();
 
 class Routes extends BaseRoutes {
   constructor() {
@@ -23,13 +27,18 @@ class Routes extends BaseRoutes {
     //Auth
     this.router.post("/login", authC.login);
     this.router.post("/register", authC.register);
+    this.router.get("/logout", auth, authC.logout);
 
     //Device
     this.router.post("/devices/input", deviceC.input);
-    this.router.get("/devices/:machine", auth, deviceC.index);
-    this.router.get("/devices/pb-status/:machine", auth, deviceC.pbStatus);
-    this.router.get("/devices/latest-sensor/:machine", auth, deviceC.latestSensor);
-    this.router.get("/devices/history-sensor/:machine", auth, deviceC.historySensor);
+
+    //Testing
+    this.router.get("/testing/index", auth, testingC.index);
+    this.router.get("/testing/latest", auth, testingC.latest);
+
+    //Pick and Place
+    this.router.get("/pickplace/index", auth, pickplaceC.index);
+    this.router.get("/pickplace/latest", auth, pickplaceC.latest);
 
     //Parameter
     this.router.get("/parameter/:machine", auth, parameterC.index);

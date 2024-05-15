@@ -48,13 +48,46 @@ class AuthServices implements AuthInterface {
     password,
     name,
     role,
-  }: RegisterType): Promise<any> {
-    if (!username) {
-      return {};
+  }: RegisterType): Promise<ResponseInterface> {
+    if (!username || !password || !name || !role) {
+      return {
+        success: false,
+        message: "username, password, name and role is required",
+        data: null,
+      };
     }
+
+    const user = await User.findOne({ username });
+    if (user) {
+      return {
+        success: false,
+        message: "Username already exists",
+        data: null,
+      };
+    }
+
+    const passwordHash = await Authentication.passwordHash(password);
+
+    const newUser = new User({
+      name,
+      username,
+      password: passwordHash,
+      role,
+    });
+
+    await newUser.save();
+    return {
+      success: true,
+      message: "Register Success",
+      data: null,
+    };
   }
-  async logout(): Promise<any> {
-    throw new Error("Method not implemented.");
+  async logout(): Promise<ResponseInterface> {
+    return {
+      success: true,
+      message: "Logout Success",
+      data: null,
+    };
   }
 }
 

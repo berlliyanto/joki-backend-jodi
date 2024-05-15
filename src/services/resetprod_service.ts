@@ -6,8 +6,8 @@ import { Performance } from "../models/performance_model";
 import { Quality } from "../models/quality_model";
 import { OEE } from "../models/oee_model";
 
-class ResetProd {
-  async resetAll(machine: number): Promise<ResponseInterface> {
+class ResetProdService {
+  async resetAll(machine: string): Promise<ResponseInterface> {
     const session = await mongoose.startSession();
     session.startTransaction();
 
@@ -49,4 +49,4 @@ class ResetProd {
   }
 }
 
-export default ResetProd;
+export default ResetProdService;
