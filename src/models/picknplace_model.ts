@@ -1,15 +1,8 @@
 import mongoose, { Document } from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
+import { ValuesType } from "../interface/valuesplc_interface";
 
 const { Schema } = mongoose;
-
-export type ValuesType = {
-    id: string,
-    v: string,
-    q: boolean,
-    t: number,
-    _id: string
-}
 
 export interface PickPlaceDocument extends Document {
     timestamp: number,

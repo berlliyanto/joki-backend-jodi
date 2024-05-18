@@ -6,12 +6,16 @@ import { auth } from "../middlewares/auth_middleware";
 import ParameterController from "../controllers/parameter_controller";
 import PickPlaceController from "../controllers/pickplace_controller";
 import TestingController from "../controllers/tesing_controller";
+import TroubleshootController from "../controllers/troubleshoot_controller";
+import ResetProdController from "../controllers/resetprod_controller";
 
 const authC = new AuthController();
 const deviceC = new DeviceController();
+const resetProdC = new ResetProdController();
 const parameterC = new ParameterController();
 const pickplaceC = new PickPlaceController();
 const testingC = new TestingController();
+const troubleshootC = new TroubleshootController();
 
 class Routes extends BaseRoutes {
   constructor() {
@@ -32,6 +36,9 @@ class Routes extends BaseRoutes {
     //Device
     this.router.post("/devices/input", deviceC.input);
 
+    //Reset Production
+    this.router.post("/resetproduction", auth, resetProdC.reset);
+
     //Testing
     this.router.get("/testing/index", auth, testingC.index);
     this.router.get("/testing/latest", auth, testingC.latest);
@@ -45,6 +52,14 @@ class Routes extends BaseRoutes {
     this.router.get("/parameter/latest/:machine", auth, parameterC.latest);
     this.router.post("/parameter/new", auth, parameterC.new);
     this.router.post("/parameter/reset/:machine", auth, parameterC.reset);
+
+    //
+
+    //Troubleshoot
+    this.router.get("/troubleshoot/:machine", auth, troubleshootC.index);
+    this.router.post("/troubleshoot/new", auth, troubleshootC.new);
+    this.router.put("/troubleshoot/update/:id", auth, troubleshootC.update);
+
   }
 }
 

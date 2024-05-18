@@ -4,6 +4,7 @@ import { PickPlace } from "../models/picknplace_model";
 import { Testing } from "../models/testing_model";
 import { ValuesType } from "../interface/valuesplc_interface";
 import { StatusPlant } from "../models/statusplant_model";
+import { Quality } from "../models/quality_model";
 
 interface PaginateDocsInterface {
   timestamp: number;
@@ -28,51 +29,14 @@ class DeviceServices {
     session.startTransaction();
 
     try {
-      const pickPlace = await PickPlace.create({
-        values: pickplaceData,
-        timestamp,
-      });
-      const testing = await Testing.create({ values: testingData, timestamp });
-
-      const pickplaceStatus = pickplaceData.filter((item: ValuesType) =>
-        item.id.includes("PB_")
-      );
-      pickplaceStatus.forEach(async (v: ValuesType) => {
-        if(v.id.includes("PB_Start")){
-          if(v.v === true) {
-            await StatusPlant.updateOne({}, { $set: { pickplace: true } });
-          }
-        }
-
-        if(v.id.includes("PB_Stop")){
-          if(v.v === false) {
-            await StatusPlant.updateOne({}, { $set: { pickplace: false } });
-          }
-        }
-      });
-
-      const testingStatus = testingData.filter((item: ValuesType) =>
-        item.id.includes("PB_")
-      );
-      testingStatus.forEach(async (v: ValuesType) => {
-        if(v.id.includes("PB_Start")){
-          if(v.v === true) {
-            await StatusPlant.updateOne({}, { $set: { testing: true } });
-          }
-        }
-
-        if(v.id.includes("PB_Stop")){
-          if(v.v === false) {
-            await StatusPlant.updateOne({}, { $set: { testing: false } });
-          }
-        }
-      });
+      await this.pickPlace(pickplaceData, timestamp);
+      await this.testing(testingData, timestamp);
 
       await session.commitTransaction();
       return {
         success: true,
         message: "Data created",
-        data: { pickPlace, testing },
+        data: body,
       };
     } catch (error) {
       await session.abortTransaction();
@@ -82,6 +46,109 @@ class DeviceServices {
         message: "Error while creating data : " + error,
         data: null,
       };
+    }
+  }
+
+  private async pickPlace(
+    pickPlaceData: ValuesType[],
+    timestamp: number
+  ): Promise<void> {
+    await PickPlace.create({
+      values: pickPlaceData,
+      timestamp,
+    });
+
+    const name = pickPlaceData[0].id.split(".")[1];
+    await this.quality(name);
+
+    const pickplaceStatus = pickPlaceData.filter((item: ValuesType) =>
+      item.id.includes("PB_")
+    );
+    pickplaceStatus.forEach(async (v: ValuesType) => {
+      if (v.id.includes("PB_Start")) {
+        if (v.v === true) {
+          await StatusPlant.updateOne({}, { $set: { pickplace: true } });
+        }
+      }
+
+      if (v.id.includes("PB_Stop")) {
+        if (v.v === false) {
+          await StatusPlant.updateOne({}, { $set: { pickplace: false } });
+        }
+      }
+    });
+  }
+
+  private async testing(
+    testingData: ValuesType[],
+    timestamp: number
+  ): Promise<void> {
+    await Testing.create({ values: testingData, timestamp });
+
+    const name = testingData[0].id.split(".")[1];
+    await this.quality(name);
+
+    const testingStatus = testingData.filter((item: ValuesType) =>
+      item.id.includes("PB_")
+    );
+    testingStatus.forEach(async (v: ValuesType) => {
+      if (v.id.includes("PB_Start")) {
+        if (v.v === true) {
+          await StatusPlant.updateOne({}, { $set: { testing: true } });
+        }
+      }
+
+      if (v.id.includes("PB_Stop")) {
+        if (v.v === false) {
+          await StatusPlant.updateOne({}, { $set: { testing: false } });
+        }
+      }
+    });
+  }
+
+  private async quality(machine: string): Promise<void> {
+    if (machine === "p&place") {
+      let count: number = 0;
+      const pickplaceWatch = PickPlace.watch();
+      pickplaceWatch.on("change", async (change) => {
+        if (change.operationType === "insert") {
+          const newestpickplace = await PickPlace.findOne({}, null, {
+            sort: { _id: -1 },
+          });
+
+          console.log(newestpickplace);
+
+          if(typeof newestpickplace!.values[0].v === "number"){
+            count = newestpickplace!.values[0].v;
+          }
+        }
+      });
+
+      await Quality.findOneAndUpdate(
+        { machine: machine, state: true },
+        { processed: count, good: count }
+      );
+    } else if (machine === "testing") {
+      let count: number = 0;
+      const testingWatch = Testing.watch();
+      testingWatch.on("change", async (change) => {
+        if (change.operationType === "insert") {
+          const newestTesting = await Testing.findOne({}, null, {
+            sort: { _id: -1 },
+          });
+
+          console.log(newestTesting);
+
+          if(typeof newestTesting!.values[0].v === "number"){
+            count = newestTesting!.values[0].v;
+          }
+        }
+      });
+
+      await Quality.findOneAndUpdate(
+        { machine: machine, state: true },
+        { processed: count, good: count }
+      );
     }
   }
 }
