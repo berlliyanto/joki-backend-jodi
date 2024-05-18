@@ -35,7 +35,7 @@ class DeviceServices {
       const testing = await Testing.create({ values: testingData, timestamp });
 
       const pickplaceStatus = pickplaceData.filter((item: ValuesType) =>
-        item._id.includes("PB_")
+        item.id.includes("PB_")
       );
       pickplaceStatus.forEach(async (v: ValuesType) => {
         if (v.v === "1") {
