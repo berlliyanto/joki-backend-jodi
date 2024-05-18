@@ -40,13 +40,13 @@ class DeviceServices {
       pickplaceStatus.forEach(async (v: ValuesType) => {
         if(v.id.includes("PB_Start")){
           if(v.v === true) {
-            await StatusPlant.updateOne({}, { $set: { pickPlace: true } });
+            await StatusPlant.updateOne({}, { $set: { pickplace: true } });
           }
         }
 
         if(v.id.includes("PB_Stop")){
           if(v.v === false) {
-            await StatusPlant.updateOne({}, { $set: { pickPlace: false } });
+            await StatusPlant.updateOne({}, { $set: { pickplace: false } });
           }
         }
       });
@@ -57,13 +57,13 @@ class DeviceServices {
       testingStatus.forEach(async (v: ValuesType) => {
         if(v.id.includes("PB_Start")){
           if(v.v === true) {
-            await StatusPlant.updateOne({}, { $set: { pickPlace: true } });
+            await StatusPlant.updateOne({}, { $set: { testing: true } });
           }
         }
 
         if(v.id.includes("PB_Stop")){
           if(v.v === false) {
-            await StatusPlant.updateOne({}, { $set: { pickPlace: false } });
+            await StatusPlant.updateOne({}, { $set: { testing: false } });
           }
         }
       });
