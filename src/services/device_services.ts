@@ -116,7 +116,7 @@ class DeviceServices {
             sort: { _id: -1 },
           });
 
-          console.log(newestpickplace);
+          console.log(typeof newestpickplace!.values[0].v === "number");
 
           if(typeof newestpickplace!.values[0].v === "number"){
             count = newestpickplace!.values[0].v;
@@ -137,7 +137,7 @@ class DeviceServices {
             sort: { _id: -1 },
           });
 
-          console.log(newestTesting);
+          console.log(typeof newestTesting!.values[0].v === "number");
 
           if(typeof newestTesting!.values[0].v === "number"){
             count = newestTesting!.values[0].v;
