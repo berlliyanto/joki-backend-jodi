@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { ResponseInterface } from "../interface/response_interface";
 import ParameterServices from "../services/parameter_services";
 import { paginationQuery } from "../utils/pagination_query";
+import { requiredData } from "../utils/required_data";
 
 class ParameterController {
   async index(
@@ -35,6 +36,12 @@ class ParameterController {
     req: Request,
     res: Response
   ): Promise<Response<ResponseInterface, Record<string, any>>> {
+    const required = ["machine", "loading_time", "cycle_time", "oee_target", "object_type"];
+    const passed = requiredData(req.body, required);
+    if (!passed.success) {
+      return res.status(400).send(passed);
+    }
+
     const data = await new ParameterServices().new(req.body);
     if (!data.success) {
       return res.status(404).send(data);

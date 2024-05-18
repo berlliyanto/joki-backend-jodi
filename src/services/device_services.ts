@@ -121,11 +121,10 @@ class DeviceServices {
           }
 
           console.log(count);
-
         }
       });
 
-      await Quality.findOneAndUpdate(
+      const update = await Quality.findOneAndUpdate(
         { $and: [{ machine: "p&place" }, { state: true }] },
         {
           $set: {
@@ -134,6 +133,11 @@ class DeviceServices {
           },
         }
       );
+      if (!update) {
+        console.log("Data not found p&plcae");
+      } else {
+        console.log("Data updated p&plcae");
+      }
     } else if (machine === "testing") {
       let count: number = 0;
       const testingWatch = Testing.watch();
@@ -146,12 +150,10 @@ class DeviceServices {
           if (typeof newestTesting!.values[0].v === "number") {
             count = newestTesting!.values[0].v;
           }
-
-          console.log(count);
         }
       });
 
-      await Quality.findOneAndUpdate(
+      const update = await Quality.findOneAndUpdate(
         { $and: [{ machine: "testing" }, { state: true }] },
         {
           $set: {
@@ -160,6 +162,12 @@ class DeviceServices {
           },
         }
       );
+
+      if (!update) {
+        console.log("Data not found testing");
+      } else {
+        console.log("Data updated testing");
+      }
     }
   }
 }
