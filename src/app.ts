@@ -5,6 +5,8 @@ import morgan from "morgan";
 import compression from "compression";
 import MongoDB from "./config/config";
 import Routes from "./routes/routes";
+import { Quality } from "./models/quality_model";
+import QualityStream from "./stream/quality_stream";
 
 class App {
   public app: Application;
@@ -15,6 +17,7 @@ class App {
     this.connection();
     this.plugins();
     this.routes();
+    this.streams();
   }
 
   private connection(): void {
@@ -33,8 +36,13 @@ class App {
   protected routes(): void {
     this.app.get("/", (req: Request, res: Response) => {
       res.send("Ini BACKEND");
-    })
+    });
     this.app.use("/api", new Routes().router);
+  }
+
+  protected streams(): void {
+    QualityStream.counting("p&place");
+    QualityStream.counting("testing");
   }
 }
 
