@@ -116,17 +116,23 @@ class DeviceServices {
             sort: { _id: -1 },
           });
 
-          console.log(typeof newestpickplace!.values[0].v === "number");
-
-          if(typeof newestpickplace!.values[0].v === "number"){
+          if (typeof newestpickplace!.values[0].v === "number") {
             count = newestpickplace!.values[0].v;
           }
+
+          console.log(count);
+
         }
       });
 
       await Quality.findOneAndUpdate(
-        { machine: machine, state: true },
-        { processed: count, good: count }
+        { $and: [{ machine: "p&place" }, { state: true }] },
+        {
+          $set: {
+            processed: count,
+            good: count,
+          },
+        }
       );
     } else if (machine === "testing") {
       let count: number = 0;
@@ -137,17 +143,22 @@ class DeviceServices {
             sort: { _id: -1 },
           });
 
-          console.log(typeof newestTesting!.values[0].v === "number");
-
-          if(typeof newestTesting!.values[0].v === "number"){
+          if (typeof newestTesting!.values[0].v === "number") {
             count = newestTesting!.values[0].v;
           }
+
+          console.log(count);
         }
       });
 
       await Quality.findOneAndUpdate(
-        { machine: machine, state: true },
-        { processed: count, good: count }
+        { $and: [{ machine: "testing" }, { state: true }] },
+        {
+          $set: {
+            processed: count,
+            good: count,
+          },
+        }
       );
     }
   }
