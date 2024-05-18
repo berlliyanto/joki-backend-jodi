@@ -119,8 +119,6 @@ class DeviceServices {
           if (typeof newestpickplace!.values[0].v === "number") {
             count = newestpickplace!.values[0].v;
           }
-
-          console.log(count);
         }
       });
 
@@ -133,11 +131,10 @@ class DeviceServices {
           },
         }
       );
-      if (!update) {
-        console.log("Data not found p&plcae");
-      } else {
-        console.log("Data updated p&plcae");
-      }
+
+      console.log(count);
+      console.log(update);
+
     } else if (machine === "testing") {
       let count: number = 0;
       const testingWatch = Testing.watch();
@@ -163,11 +160,8 @@ class DeviceServices {
         }
       );
 
-      if (!update) {
-        console.log("Data not found testing");
-      } else {
-        console.log("Data updated testing");
-      }
+      console.log(count);
+      console.log(update);
     }
   }
 }
