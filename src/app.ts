@@ -5,8 +5,10 @@ import morgan from "morgan";
 import compression from "compression";
 import MongoDB from "./config/config";
 import Routes from "./routes/routes";
-import { Quality } from "./models/quality_model";
 import QualityStream from "./stream/quality_stream";
+import AvailabilityStream from "./stream/availability_stream";
+import PerformanceStream from "./stream/performance_stream";
+import OeeStream from "./stream/oee_stream";
 
 class App {
   public app: Application;
@@ -41,8 +43,10 @@ class App {
   }
 
   protected streams(): void {
-    QualityStream.counting("p&place");
-    QualityStream.counting("testing");
+    new QualityStream();
+    new AvailabilityStream();
+    new PerformanceStream();
+    new OeeStream();
   }
 }
 

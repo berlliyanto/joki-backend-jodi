@@ -49,22 +49,8 @@ class ParameterServices {
     };
   }
   async new(data: ParameterType): Promise<ResponseInterface> {
-    const { machine, loading_time, cycle_time, oee_target, object_type } = data;
-    if (
-      !machine ||
-      !loading_time ||
-      !cycle_time ||
-      !oee_target ||
-      !object_type
-    ) {
-      return {
-        success: false,
-        message:
-          "machine, loading_time, cycle_time, oee_target and object_type is required",
-        data: null,
-      };
-    }
-
+    const { machine, loading_time, cycle_time, oee_target, object_type, target_count } = data;
+    
     const session = await mongoose.startSession();
     session.startTransaction();
 
@@ -73,7 +59,7 @@ class ParameterServices {
       await Quality.create({machine, processed: 0, good: 0, defect: 0, state: true,});
       await Availability.create({machine, operation_time: 0, down_time: 0, running_time: 0, state: true,})
       await OEE.create({machine, availability: 0, quality: 0, performance: 0, state: true,});
-      await Parameter.create({machine, loading_time, cycle_time, oee_target, object_type, state: true,});
+      await Parameter.create({machine, loading_time, cycle_time, oee_target, object_type, target_count, state: true});
 
       await session.commitTransaction();
       return {

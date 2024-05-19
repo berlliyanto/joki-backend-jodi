@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import { Performance } from "../models/performance_model";
 import { Quality } from "../models/quality_model";
 import { OEE } from "../models/oee_model";
+import { StatusPlant } from "../models/statusplant_model";
 
 class ResetProdService {
   async resetAll(machine: string): Promise<ResponseInterface> {
@@ -30,21 +31,34 @@ class ResetProdService {
       );
       await OEE.updateMany({ machine: machine, state: true }, { state: false });
 
+      await StatusPlant.updateMany(
+        {},
+        {
+          $set: {
+            pickplace: { status: false, pb_start: false, pb_stop: false },
+            testing: { status: false, pb_start: false, pb_stop: false },
+          },
+        }
+      );
+
       await session.commitTransaction();
       return {
         success: true,
         message: "Data reset successfully",
-        data: null,
-      }
+        data: {
+          pickplace: { status: false, pb_start: false, pb_stop: false },
+          testing: { status: false, pb_start: false, pb_stop: false },
+        },
+      };
     } catch (error) {
-        await session.abortTransaction();
-        session.endSession();
+      await session.abortTransaction();
+      session.endSession();
 
-        return {
-          success: false,
-          message: "Error while resetting data : " + error,
-          data: null,
-        };
+      return {
+        success: false,
+        message: "Error while resetting data : " + error,
+        data: null,
+      };
     }
   }
 }

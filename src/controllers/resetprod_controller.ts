@@ -11,7 +11,7 @@ class ResetProdController {
 
     const data = await new ResetProdService().resetAll(machine);
     if (!data.success) {
-      return res.status(404).send(data);
+      return res.status(400).send(data);
     }
     return res.status(200).send(data);
   }

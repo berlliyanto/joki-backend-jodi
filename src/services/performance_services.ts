@@ -1,13 +1,13 @@
 import { PaginationInterface } from "../interface/pagination_interface";
 import { ResponseInterface } from "../interface/response_interface";
-import { OEE } from "../models/oee_model";
+import { Performance } from "../models/performance_model";
 
-class OEEService {
+class PerformanceService {
   async index(
     machine: string,
     { page, limit }: PaginationInterface
   ): Promise<ResponseInterface> {
-    const data = await OEE.paginate(
+    const data = await Performance.paginate(
       { machine: machine },
       { page: page, limit: limit, sort: { _id: -1 } }
     );
@@ -26,7 +26,7 @@ class OEEService {
   }
 
   async latest(machine: string): Promise<ResponseInterface> {
-    const data = await OEE.findOne({ machine: machine }, null, {
+    const data = await Performance.findOne({ machine: machine }, null, {
       sort: { _id: -1 },
     });
     if (!data) {
@@ -45,4 +45,4 @@ class OEEService {
 
 }
 
-export default OEEService;
+export default PerformanceService;

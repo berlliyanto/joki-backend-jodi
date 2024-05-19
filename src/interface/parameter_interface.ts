@@ -3,5 +3,6 @@ export type ParameterType = {
     loading_time: number,
     cycle_time: number,
     oee_target: number,
-    object_type: string
+    object_type: string,
+    target_count: number,
 }

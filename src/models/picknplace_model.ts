@@ -5,21 +5,29 @@ import { ValuesType } from "../interface/valuesplc_interface";
 const { Schema } = mongoose;
 
 export interface PickPlaceDocument extends Document {
-    timestamp: number,
-    values: ValuesType[]
+  timestamp: number;
+  values: ValuesType[];
 }
 
-const pickPlaceSchema = new Schema<PickPlaceDocument>({
+const pickPlaceSchema = new Schema<PickPlaceDocument>(
+  {
     timestamp: {
-        type: Number,
-        required: true
+      type: Number,
+      required: true,
     },
     values: {
-        type: [Object] as unknown as ValuesType[],
-        required: true
-    }
-});
+      type: [Object] as unknown as ValuesType[],
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
 pickPlaceSchema.plugin(mongoosePaginate);
 
-export const PickPlace = mongoose.model<PickPlaceDocument, mongoose.PaginateModel<PickPlaceDocument>>("pickplaces", pickPlaceSchema);
+export const PickPlace = mongoose.model<
+  PickPlaceDocument,
+  mongoose.PaginateModel<PickPlaceDocument>
+>("pickplaces", pickPlaceSchema);

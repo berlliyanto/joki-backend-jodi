@@ -3,22 +3,36 @@ import mongoosePaginate from "mongoose-paginate-v2";
 
 const { Schema } = mongoose;
 
+export type ValuePlantType = {
+  status: boolean;
+  pb_start: boolean;
+  pb_stop: boolean;
+};
+
 export interface StatusPlantDocument extends Document {
-    testing: boolean,
-    pickplace: boolean
+  testing: ValuePlantType;
+  pickplace: ValuePlantType;
 }
 
-const statusPlant = new Schema<StatusPlantDocument>({
+const statusPlant = new Schema<StatusPlantDocument>(
+  {
     testing: {
-        type: Boolean,
-        required: true
+      type: Object,
+      required: true,
     },
     pickplace: {
-        type: Boolean,
-        required: true
-    }
-});
+      type: Object,
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
 statusPlant.plugin(mongoosePaginate);
 
-export const StatusPlant = mongoose.model<StatusPlantDocument, mongoose.PaginateModel<StatusPlantDocument>>("statusplants", statusPlant);
+export const StatusPlant = mongoose.model<
+  StatusPlantDocument,
+  mongoose.PaginateModel<StatusPlantDocument>
+>("statusplants", statusPlant);

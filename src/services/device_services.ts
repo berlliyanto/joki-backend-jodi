@@ -5,6 +5,8 @@ import { Testing } from "../models/testing_model";
 import { ValuesType } from "../interface/valuesplc_interface";
 import { StatusPlant } from "../models/statusplant_model";
 import { Quality } from "../models/quality_model";
+import { getParameter } from "../utils/get_parameter";
+import { Availability } from "../models/availability_model";
 
 interface PaginateDocsInterface {
   timestamp: number;
@@ -49,6 +51,46 @@ class DeviceServices {
     }
   }
 
+  async monitorProduction(machine: string): Promise<ResponseInterface> {
+    try {
+      const parameter = await getParameter(machine);
+      const quality = await Quality.findOne(
+        { machine: machine, state: true },
+        null,
+        { sort: { _id: -1 } }
+      );
+      const availability = await Availability.findOne(
+        { machine: machine, state: true },
+        null,
+        { sort: { _id: -1 } }
+      );
+
+      const data = {
+        machine: machine,
+        object_type: parameter.object_type,
+        target: parameter.target_count,
+        actual: quality?.processed ?? 0,
+        defect: quality?.defect ?? 0,
+        stock_material: 0,
+        operation_time: availability?.operation_time,
+        running_time: availability?.running_time,
+        down_time: availability?.down_time,
+      };
+
+      return {
+        success: true,
+        message: "Data fetched",
+        data: data,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: "Error while getting data : " + error,
+        data: null,
+      };
+    }
+  }
+
   private async pickPlace(
     pickPlaceData: ValuesType[],
     timestamp: number
@@ -64,13 +106,27 @@ class DeviceServices {
     pickplaceStatus.forEach(async (v: ValuesType) => {
       if (v.id.includes("PB_Start")) {
         if (v.v === true) {
-          await StatusPlant.updateOne({}, { $set: { pickplace: true } });
+          await StatusPlant.updateOne(
+            {},
+            {
+              $set: {
+                pickplace: { status: true, pb_start: true, pb_stop: false },
+              },
+            }
+          );
         }
       }
 
       if (v.id.includes("PB_Stop")) {
         if (v.v === false) {
-          await StatusPlant.updateOne({}, { $set: { pickplace: false } });
+          await StatusPlant.updateOne(
+            {},
+            {
+              $set: {
+                pickplace: { status: true, pb_start: true, pb_stop: false },
+              },
+            }
+          );
         }
       }
     });
@@ -87,13 +143,27 @@ class DeviceServices {
     testingStatus.forEach(async (v: ValuesType) => {
       if (v.id.includes("PB_Start")) {
         if (v.v === true) {
-          await StatusPlant.updateOne({}, { $set: { testing: true } });
+          await StatusPlant.updateOne(
+            {},
+            {
+              $set: {
+                testing: { status: true, pb_start: true, pb_stop: false },
+              },
+            }
+          );
         }
       }
 
       if (v.id.includes("PB_Stop")) {
         if (v.v === false) {
-          await StatusPlant.updateOne({}, { $set: { testing: false } });
+          await StatusPlant.updateOne(
+            {},
+            {
+              $set: {
+                testing: { status: false, pb_start: false, pb_stop: true },
+              },
+            }
+          );
         }
       }
     });
