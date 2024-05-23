@@ -91,6 +91,15 @@ class DeviceServices {
     }
   }
 
+  async statusPlant(): Promise<ResponseInterface> {
+    const status = await StatusPlant.findOne({}, null, { sort: { _id: -1 } });
+    return {
+      success: true,
+      message: "Data fetched",
+      data: status,
+    };
+  }
+
   private async pickPlace(
     pickPlaceData: ValuesType[],
     timestamp: number

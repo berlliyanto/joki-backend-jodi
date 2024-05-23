@@ -18,6 +18,8 @@ import OEEController from "../controllers/oee_controller";
 import UserController from "../controllers/user_controller";
 import { onlyAdmin } from "../middlewares/role_middleware";
 import { validateUserUpdate } from "../middlewares/user_middleware";
+import MaterialController from "../controllers/material_controller";
+import validateUpdateMaterial from "../middlewares/material_middleware";
 
 const authC = new AuthController();
 const deviceC = new DeviceController();
@@ -31,6 +33,7 @@ const availabilityC = new AvailabilityController();
 const performanceC = new PerformanceController();
 const oeeC = new OEEController();
 const userC = new UserController();
+const materialC = new MaterialController();
 
 class Routes extends BaseRoutes {
   constructor() {
@@ -56,6 +59,7 @@ class Routes extends BaseRoutes {
     //Device
     this.router.post("/devices/input", deviceC.input);
     this.router.get("/devices/monitor/:machine", auth, deviceC.monitorProduction);
+    this.router.get("/devices/status", auth, deviceC.statusPlant);
 
     //Reset Production
     this.router.post("/resetproduction/:machine", auth, resetProdC.reset);
@@ -95,6 +99,11 @@ class Routes extends BaseRoutes {
     this.router.get("/troubleshoot/:machine", auth, troubleshootC.index);
     this.router.post("/troubleshoot/new", auth, validateTroubleshoot, troubleshootC.new);
     this.router.put("/troubleshoot/update/:id", auth, troubleshootC.update);
+
+    //Material
+    this.router.get("/material/index/:machine", auth, materialC.index);
+    this.router.get("/material/latest/:machine", auth, materialC.latest);
+    this.router.put("/material/update/:machine/:method", validateUpdateMaterial, materialC.update);
 
   }
 }
