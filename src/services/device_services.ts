@@ -132,7 +132,7 @@ class DeviceServices {
             {},
             {
               $set: {
-                pickplace: { status: true, pb_start: true, pb_stop: false },
+                pickplace: { status: true, pb_start: false, pb_stop: true },
               },
             }
           );

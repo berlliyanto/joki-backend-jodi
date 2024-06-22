@@ -28,6 +28,8 @@ class AvailabilityStream {
           this.testingData = newestDocument.testing;
         }
 
+        console.log(this.testingData);
+        console.log(this.pickPlaceData);
       }
     });
   }
@@ -85,6 +87,8 @@ class AvailabilityStream {
         this.timeTesting = 0;
         return;
       }
+
+      
 
       if (this.timeTesting < loadingTime * 60) {
         if (this.testingData?.pb_start && !this.testingData?.pb_stop) {
