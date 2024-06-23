@@ -84,7 +84,7 @@ class AvailabilityStream {
 
           await Availability.findOneAndUpdate(
             { $and: [{ machine: machine }, { state: true }] },
-            { $inc: { running_time: this.timePickPlace, down_time: this.timeDownPickPlace } }
+            { $set: { running_time: this.timePickPlace, down_time: this.timeDownPickPlace } }
           );
         }
       } else {
