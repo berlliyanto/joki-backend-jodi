@@ -8,10 +8,18 @@ class AvailabilityStream {
   protected testingData: ValuePlantType | undefined;
   protected timePickPlace: number;
   protected timeTesting: number;
+  protected timeRunPickPlace: number;
+  protected timeRunTesting: number;
+  protected timeDownPickPlace: number;
+  protected timeDownTesting: number;
 
   constructor() {
     this.timePickPlace = 0;
     this.timeTesting = 0;
+    this.timeRunPickPlace = 0;
+    this.timeRunTesting = 0;
+    this.timeDownPickPlace = 0;
+    this.timeDownTesting = 0;
     this.countingTime();
   }
 
@@ -53,30 +61,36 @@ class AvailabilityStream {
     if (machine === "p&place") {
       if (!availability || !stateParameter) {
         this.timePickPlace = 0;
+        this.timeRunPickPlace = 0;
+        this.timeDownPickPlace = 0;
         return;
       }
 
       if (this.timePickPlace < loadingTime * 60) {
         if (this.pickPlaceData?.pb_start && !this.pickPlaceData?.pb_stop) {
           this.timePickPlace++;
+          this.timeRunPickPlace++;
 
           await Availability.findOneAndUpdate(
             { $and: [{ machine: machine }, { state: true }] },
-            { $inc: { operation_time: 1, running_time: 1 } }
+            { $set: { operation_time: this.timePickPlace, running_time: this.timeRunPickPlace } }
           );
         } else if (
           !this.pickPlaceData?.pb_start &&
           this.pickPlaceData?.pb_stop
         ) {
           this.timePickPlace++;
+          this.timeDownPickPlace++;
 
           await Availability.findOneAndUpdate(
             { $and: [{ machine: machine }, { state: true }] },
-            { $inc: { running_time: 1, down_time: 1 } }
+            { $inc: { running_time: this.timePickPlace, down_time: this.timeDownPickPlace } }
           );
         }
       } else {
         this.timePickPlace = 0;
+        this.timeRunPickPlace = 0;
+        this.timeDownPickPlace = 0;
         await Availability.findOneAndUpdate(
           { $and: [{ machine: machine }, { state: true }] },
           { $set: { state: false } }
@@ -85,27 +99,33 @@ class AvailabilityStream {
     } else if (machine === "testing") {
       if (!availability || !stateParameter) {
         this.timeTesting = 0;
+        this.timeRunTesting = 0;
+        this.timeDownTesting = 0;
         return;
       }
 
       if (this.timeTesting < loadingTime * 60) {
         if (this.testingData?.pb_start && !this.testingData?.pb_stop) {
           this.timeTesting++;
+          this.timeRunTesting++;
 
           await Availability.findOneAndUpdate(
             { $and: [{ machine: machine }, { state: true }] },
-            { $inc: { operation_time: 1, running_time: 1 } }
+            { $set: { operation_time: this.timeTesting, running_time: this.timeRunTesting } }
           );
         } else if (!this.testingData?.pb_start && this.testingData?.pb_stop) {
           this.timeTesting++;
+          this.timeDownTesting++;
 
           await Availability.findOneAndUpdate(
             { $and: [{ machine: machine }, { state: true }] },
-            { $inc: { operation_time: 1, down_time: 1 } }
+            { $set: { operation_time: this.timeTesting, down_time: this.timeDownTesting } }
           );
         }
       } else {
         this.timeTesting = 0;
+        this.timeRunTesting = 0;
+        this.timeDownTesting = 0;
         await Availability.findOneAndUpdate(
           { $and: [{ machine: machine }, { state: true }] },
           { $set: { state: false } }
