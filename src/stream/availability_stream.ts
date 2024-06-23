@@ -1,3 +1,4 @@
+import { ChangeStreamDocumentInterface } from "../interface/changestream_interface";
 import { Availability } from "../models/availability_model";
 import { StatusPlant, ValuePlantType } from "../models/statusplant_model";
 import { getParameter } from "../utils/get_parameter";
@@ -11,31 +12,30 @@ class AvailabilityStream {
   constructor() {
     this.timePickPlace = 0;
     this.timeTesting = 0;
-    this.streamStatus();
     this.countingTime();
   }
 
   private async streamStatus(): Promise<void> {
-    const watchStream = StatusPlant.watch();
-    watchStream.on("change", async (change) => {
-      if (change.operationType === "update") {
-        const newestDocument = await StatusPlant.findOne({}, null, {
-          sort: { _id: -1 },
-        });
+    // const watchStream = StatusPlant.watch();
+    // watchStream.on("change", async (change : ChangeStreamDocumentInterface) => {
+    //   if (change.operationType === "update") {
 
-        if (newestDocument) {
-          this.pickPlaceData = newestDocument.pickplace;
-          this.testingData = newestDocument.testing;
-        }
+    //   }
+    // });
 
-        console.log(this.testingData);
-        console.log(this.pickPlaceData);
-      }
+    const newestDocument = await StatusPlant.findOne({}, null, {
+      sort: { _id: -1 },
     });
+
+    if (newestDocument) {
+      this.pickPlaceData = newestDocument.pickplace;
+      this.testingData = newestDocument.testing;
+    }
   }
 
   private countingTime(): void {
     setInterval(() => {
+      this.streamStatus();
       this.setAvailability("p&place");
       this.setAvailability("testing");
     }, 1000);
@@ -87,8 +87,6 @@ class AvailabilityStream {
         this.timeTesting = 0;
         return;
       }
-
-      
 
       if (this.timeTesting < loadingTime * 60) {
         if (this.testingData?.pb_start && !this.testingData?.pb_stop) {
