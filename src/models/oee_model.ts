@@ -8,6 +8,7 @@ export interface OEEDocument extends Document {
   availability: number;
   quality: number;
   performance: number;
+  oee: number;
   state: boolean;
 }
 
@@ -26,6 +27,10 @@ const oeeSchema = new Schema<OEEDocument>(
       required: true,
     },
     performance: {
+      type: Number,
+      required: true,
+    },
+    oee: {
       type: Number,
       required: true,
     },

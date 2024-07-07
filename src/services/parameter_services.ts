@@ -58,7 +58,7 @@ class ParameterServices {
       await Performance.create({machine, operation_time: 0, processed: 0, cycle_time: 0, state: true,});
       await Quality.create({machine, processed: 0, good: 0, defect: 0, state: true,});
       await Availability.create({machine, operation_time: 0, down_time: 0, running_time: 0, state: true,})
-      await OEE.create({machine, availability: 0, quality: 0, performance: 0, state: true,});
+      await OEE.create({machine, availability: 0, quality: 0, performance: 0, oee: 0, state: true,});
       await Parameter.create({machine, loading_time, cycle_time, oee_target, object_type, target_count, state: true});
 
       await session.commitTransaction();

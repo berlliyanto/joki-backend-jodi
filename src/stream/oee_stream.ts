@@ -38,6 +38,8 @@ class OeeStream {
       this.setQuality("testing");
       this.setOEE("p&place");
       this.setOEE("testing");
+
+      // console.log(this.testingOEE)
     }, 1000);
   }
 
@@ -62,6 +64,7 @@ class OeeStream {
           availability: data.availability,
           quality: data.quality,
           performance: data.performance,
+          oee: (data.availability * data.quality * data.performance) / 100,
         },
       }
     );
@@ -148,7 +151,7 @@ class OeeStream {
     );
 
     if (!quality) return;
-    if(quality.processed <= 0 || quality.defect <= 0) return;
+    if(quality.processed <= 0) return;
 
     if (machine === "p&place") {
       this.pickPlaceOEE = {
