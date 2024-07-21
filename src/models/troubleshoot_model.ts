@@ -5,8 +5,7 @@ export interface TroubleshootDocument extends Document {
   machine: string;
   name: string;
   problem: string;
-  state: string;
-  date: Date;
+  state: boolean;
 }
 
 const { Schema } = mongoose;
@@ -26,11 +25,7 @@ const troubleshootSchema = new Schema<TroubleshootDocument>(
       required: true,
     },
     state: {
-      type: String,
-      required: true,
-    },
-    date: {
-      type: Date,
+      type: Boolean,
       required: true,
     },
   },

@@ -149,8 +149,6 @@ class DeviceServices {
     const testingStatus = testingData.filter((item: ValuesType) =>
       item.id.includes("PB_")
     );
-
-    console.log(testingStatus);
     
     testingStatus.forEach(async (v: ValuesType) => {
       if (v.id.includes("PB_Start")) {
