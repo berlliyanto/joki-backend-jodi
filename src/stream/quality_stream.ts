@@ -48,14 +48,21 @@ class QualityStream {
             }
           );
 
-          if (
-            newestDocument?.values[4].v === false &&
-            newestDocument?.values[5].v === true
-          ) {
-            await Quality.findOneAndUpdate(
-              { machine: machine },
-              { $inc: { defect: 1, processed: 1 } }
-            );
+          if (machine === "testing") {
+            if (
+              newestDocument?.values[4].v === false &&
+              newestDocument?.values[5].v === true
+            ) {
+              await Quality.findOneAndUpdate(
+                { $and: [{ machine: "testing" }, { state: true }] },
+                { $inc: { defect: 1, processed: 1 } }
+              );
+
+              await Quality.findOneAndUpdate(
+                { $and: [{ machine: "p&place" }, { state: true }] },
+                { $inc: { defect: 1, processed: 1 } }
+              );
+            }
           }
 
           await this.updateMaterial(machine, count);
