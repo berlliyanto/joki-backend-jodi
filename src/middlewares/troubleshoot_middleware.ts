@@ -6,7 +6,6 @@ export const validateTroubleshoot = [
   check("name").isString(),
   check("problem").isString(),
   check("state").isBoolean(),
-  check("date").isDate(),
   (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
