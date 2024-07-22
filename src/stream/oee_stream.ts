@@ -57,6 +57,8 @@ class OeeStream {
     if (data.availability <= 0 || data.quality <= 0 || data.performance <= 0)
       return;
 
+    console.log(data);
+
     await OEE.findOneAndUpdate(
       { machine: machine, state: true },
       {

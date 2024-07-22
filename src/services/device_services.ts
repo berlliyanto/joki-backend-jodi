@@ -69,7 +69,7 @@ class DeviceServices {
         machine: machine,
         object_type: parameter.object_type,
         target: parameter.target_count,
-        actual: quality?.processed ?? 0,
+        good: quality?.good ?? 0,
         defect: quality?.defect ?? 0,
         stock_material: 0,
         operation_time: availability?.operation_time,

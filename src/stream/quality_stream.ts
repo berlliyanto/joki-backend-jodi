@@ -23,6 +23,7 @@ class QualityStream {
     }
 
     let count: number = 0;
+    let defect: number = 0;
     const watchStream = model.watch();
     watchStream.on("change", async (change: ChangeStreamDocumentInterface) => {
       if (change.operationType === "insert") {
@@ -31,39 +32,75 @@ class QualityStream {
             sort: { _id: -1 },
           });
 
-          if (
-            newestDocument &&
-            typeof newestDocument.values[0].v === "number"
-          ) {
-            count = newestDocument.values[0].v;
+          if (machine === "testing") {
+            if (
+              newestDocument &&
+              typeof newestDocument.values[1].v === "number"
+            ) {
+              count = newestDocument.values[1].v;
+
+              await Quality.findOneAndUpdate(
+                { $and: [{ machine: "testing" }, { state: true }] },
+                {
+                  $set: {
+                    good: count,
+                  },
+                }
+              );
+            }
+            if (
+              newestDocument &&
+              typeof newestDocument.values[0].v === "number"
+            ) {
+              defect = newestDocument.values[0].v;
+
+              await Quality.findOneAndUpdate(
+                { $and: [{ machine: "testing" }, { state: true }] },
+                {
+                  $set: {
+                    defect: defect,
+                  },
+                }
+              );
+              await Quality.findOneAndUpdate(
+                { $and: [{ machine: "p&place" }, { state: true }] },
+                {
+                  $set: {
+                    defect: defect,
+                  },
+                }
+              );
+            }
+
+            
+          } else {
+            if (
+              newestDocument &&
+              typeof newestDocument.values[0].v === "number"
+            ) {
+              count = newestDocument.values[0].v;
+            }
+
+            await Quality.findOneAndUpdate(
+              { $and: [{ machine: "p&place" }, { state: true }] },
+              {
+                $set: {
+                  good: count,
+                },
+              }
+            );
           }
 
           await Quality.findOneAndUpdate(
             { $and: [{ machine: machine }, { state: true }] },
             {
               $set: {
-                processed: count,
-                good: count,
+                processed: count + defect,
               },
             }
           );
 
-          if (machine === "testing") {
-            if (
-              newestDocument?.values[4].v === false &&
-              newestDocument?.values[5].v === true
-            ) {
-              await Quality.findOneAndUpdate(
-                { $and: [{ machine: "testing" }, { state: true }] },
-                { $inc: { defect: 1, processed: 1 } }
-              );
-
-              await Quality.findOneAndUpdate(
-                { $and: [{ machine: "p&place" }, { state: true }] },
-                { $inc: { defect: 1, processed: 1 } }
-              );
-            }
-          }
+          // console.log(machine + " Good : " + count + " Defect : " + defect);
 
           await this.updateMaterial(machine, count);
         } catch (error) {
